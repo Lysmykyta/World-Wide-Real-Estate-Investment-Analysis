@@ -16,25 +16,22 @@ apple_sales = qSales.loc[qSales['tic']=='AAPL']
 
 display(apple_sales)
 
-#Step 0 - make sure the date is recognized as a date - important during regression especially
+#Step 0 - make sure the date is recognized as a date - important during regression, especially
 # time series regression
 apple_sales = qSales.loc[qSales['tic']=='AAPL']
 
-#step 1 - always visualize the data
+# Step 1 - always visualize the data
 
 plt.figure(figsize=(10,6))
-
 plt.title('apple revenues')
-
 plt.xlabel('time')
 plt.ylabel('revenue')
-
 plt.plot(apple_sales['datadate'],apple_sales['saleq'], marker='o')
 
 """#time series forecasting is just using time as an independent variable to calculate our dependent variable"""
 
 #step 1 is to incorporate a new "time" column, which will measure time periods
-# similar to how in accounting and fiance you use Time 1, time 2, etc.
+# similar to how in accounting and finance you use Time 1, time 2, etc.
 # we want our time column to have the time period number, so 1, 2, 3, etc. etc
 
 apple_sales['time'] = range(1, len(apple_sales) + 1)
@@ -51,7 +48,7 @@ dt4testing = apple_sales[int(0.75 * len(apple_sales)):]
 display(dt4training)
 display(dt4testing)
 
-#first prepare the independent variable in our case thats just time
+#first prepare the independent variable; in our case, that's just time
 # second, prepare the dependent variable - revenue
 # fit the model
 # forecast values for our testing set
@@ -72,7 +69,7 @@ x_test = sm.add_constant(x_test)
 
 model1.predict(x_test)
 
-# how to make python give you a range of predicted values rather than a specific one
+# how to make Python give you a range of predicted values rather than a specific one
 # following code to get a range of predictions
 # 1 - alpha = confidence level
 
@@ -159,7 +156,7 @@ x_test = dt4testing.loc[:,'time']
 x_test = sm.add_constant(x_test)
 model1.predict(x_test)
 
-# how to make python give you a range of predicted values rather than a specific one
+# how to make Python give you a range of predicted values rather than a specific one
 # following code to get a range of predictions
 # 1 - alpha = confidence level
 model1.get_prediction(x_test).summary_frame(alpha=0.2) # confidence level of 80%
@@ -200,22 +197,17 @@ dt4testing['abs_pct_error'] = abs((dt4testing['rev_predicted']
                                      - dt4testing['saleq'])/dt4testing['saleq'])
 print("MAPE = ", dt4testing['abs_pct_error'].mean()) # MAPE
 
-"""To: Chapman Wealth Management
+"""
+Forecasting model for predicting Target revenue from data
 
-From: Equity Research Analyst at Quantfolio Solutions
-4
-Date: July 2th, 2026
+Bottom line. The Target revenue forecast, using sales data and a 4th-quarter dummy variable, provided a better predictive model.
 
-Re: Forecasting model for predicting Target revenue from data
+Scope. Made use of a provided representative data set and used it to train time forecasting regression models based on 4th quarter sales data. This data was used to predict revenue. The performance of the predictive models was evaluated on the test data and visualized.
 
-Bottom line. The Target revenue forecast using sales data and a 4th quarter dummy variable provided a better predictive model.
+Methodology. The dataset was split into 75% for training and 25% for testing. The model was trained using dummy variables that mark the 4th-quarter sales numbers. Performance was evaluated for both using the Mean Average Percent Error (MAPE) and visualized on a graph of sales testing data.
 
-Scope. Made use of a provided representative data set and used it to train a time forecasting regression models based on 4th quarter sales data. This data was used to predict revenue. Performance of the predictive models was tested with testing data and visualized.
+Key Findings. The forecast model with dummy variables had a low MAPE score of 12.0%. Based on the 80% confidence intervals, the lower and upper bounds were relatively tight for the revenue predictions.
 
-Methodology. The data set was split into 75% training and 25% testing data. The model was trained using dummy variables marking the 4th quarter sales numbers. Performance was evaluated for both using the Mean Average Percent Error (MAPE) and visualized on a graph of sales testing data.
-
-Key Findings. The forecast model with dummy variables had a low MAPE score of 12.0%. Observing the 80% confidence intervals, the lower and upper bounds were relatively tight on the revenue predictions.
-
-Recommendations. It is recommended that Chapman Wealth Management consider using a forecasting model with 4th quarter dummy variable, since it provides a more accurate prediction of Target actual revenue. Further modeling based on using other data variables should be investigated to see if a better predictive forecasting model is possible with a even lower MAPE score.
+Recommendations. It is recommended that Chapman Wealth Management consider using a forecasting model with a 4th-quarter dummy variable, as it provides a more accurate prediction of Target's actual revenue. Further modeling based on using other data variables should be investigated to see if a better predictive forecasting model is possible with a even lower MAPE score.
 
 """
