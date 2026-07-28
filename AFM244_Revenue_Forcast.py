@@ -3,50 +3,45 @@
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
-# sklearn aka scikitlearn
 import matplotlib.pyplot as plt
 
+# Scientific Notation removed
 pd.options.display.float_format = '{:.2f}'.format
 
 qSales = pd.read_csv('qSales_2024.csv')
-
-display(qSales)
+print(qSales.head())
 
 apple_sales = qSales.loc[qSales['tic']=='AAPL']
-
-display(apple_sales)
+print(apple_sales.head())
 
 #Step 0 - make sure the date is recognized as a date - important during regression, especially
 # time series regression
 apple_sales = qSales.loc[qSales['tic']=='AAPL']
 
 # Step 1 - always visualize the data
-
 plt.figure(figsize=(10,6))
 plt.title('apple revenues')
 plt.xlabel('time')
 plt.ylabel('revenue')
 plt.plot(apple_sales['datadate'],apple_sales['saleq'], marker='o')
 
-"""#time series forecasting is just using time as an independent variable to calculate our dependent variable"""
 
-#step 1 is to incorporate a new "time" column, which will measure time periods
+"""#time series forecasting is just using time as an independent variable to calculate our dependent variable"""
+# Step 1 is to incorporate a new "time" column, which will measure time periods
 # similar to how in accounting and finance you use Time 1, time 2, etc.
 # we want our time column to have the time period number, so 1, 2, 3, etc. etc
 
 apple_sales['time'] = range(1, len(apple_sales) + 1)
-
 apple_sales
 
-# this snippet of code splits datasets into 75% and 25%
-
+# code splits datasets into 75% and 25%
 dt4training = apple_sales[:int(0.75 * len(apple_sales))]
 
 #this command will take everything AFTER the first 75% of rows - take colon to the end
 dt4testing = apple_sales[int(0.75 * len(apple_sales)):]
 
-display(dt4training)
-display(dt4testing)
+print(dt4training)
+print(dt4testing)
 
 #first prepare the independent variable; in our case, that's just time
 # second, prepare the dependent variable - revenue
@@ -55,15 +50,12 @@ display(dt4testing)
 
 x = dt4training.loc[:,'time']
 x = sm.add_constant(x)
-
 y = dt4training.loc[:,'saleq']
 
 model1 = sm.OLS(y,x).fit()
-
 model1.params
 
 """# apple revenue = -13,536 + 1,077 * time"""
-
 x_test = dt4testing.loc[:,'time']
 x_test = sm.add_constant(x_test)
 
@@ -80,10 +72,9 @@ model1.get_prediction(x_test).summary_frame(alpha=0.2) # confidence level of 80%
 
 apple_sales['release_dummy_variable'] = np.where(apple_sales['fqtr']==1,1,0)
 apple_sales['release_dummy_interaction'] = apple_sales['time'] * apple_sales['release_dummy_variable']
-display(apple_sales)
+print(apple_sales)
 
 # ['2022-12-31','2021-12-31']
-
 dt4training = apple_sales[:int(0.75 * len(apple_sales))]
 
 #this command will take everything AFTER the first 75% of rows - take colon to the end
@@ -93,11 +84,9 @@ dt4training
 
 x = dt4training.loc[:,['time', 'release_dummy_variable','release_dummy_interaction']]
 x = sm.add_constant(x)
-
 y = dt4training.loc[:,'saleq']
 
 model1 = sm.OLS(y,x).fit()
-
 model1.params
 
 """# apple revenue = -11,044 + 933 * time + (-10,422) * release_dummy_variable + 578 * release_dummy_interaction
@@ -119,7 +108,7 @@ Step 2: do the exact same steps as testing your model, except use the synthetic 
 """
 
 synth_data = pd.read_csv('synthetic_data.csv')
-display(synth_data)
+print(synth_data)
 
 x_test = synth_data.loc[:,['time','release_dummy_variable','release_dummy_interaction']]
 x_test = sm.add_constant(x_test)
@@ -130,7 +119,7 @@ model1.get_prediction(x_test).summary_frame(alpha=0.2)
 
 qSales = pd.read_csv('qSales_2024.csv')
 sales = qSales.loc[qSales['tic']=='TGT']
-display(sales)
+print(sales)
 
 plt.figure(figsize=(10,6))
 plt.title('Company revenues')
@@ -165,7 +154,7 @@ model1.get_prediction(x_test).summary_frame(alpha=0.2) # confidence level of 80%
 
 sales['release_dummy_variable'] = np.where(sales['fqtr']==4,1,0)
 sales['release_dummy_interaction'] = sales['time'] * sales['release_dummy_variable']
-display(sales)
+print(sales)
 
 # creating new training with release dummy variable and dummy interaction
 dt4training = sales[:int(0.75 * len(sales))]
@@ -202,7 +191,7 @@ Forecasting model for predicting Target revenue from data
 
 Bottom line. The Target revenue forecast, using sales data and a 4th-quarter dummy variable, provided a better predictive model.
 
-Scope. Made use of a provided representative data set and used it to train time forecasting regression models based on 4th quarter sales data. This data was used to predict revenue. The performance of the predictive models was evaluated on the test data and visualized.
+Scope. Made use of a provided representative dataset and used it to train time forecasting regression models based on 4th quarter sales data. This data was used to predict revenue. The performance of the predictive models was evaluated on the test data and visualized.
 
 Methodology. The dataset was split into 75% for training and 25% for testing. The model was trained using dummy variables that mark the 4th-quarter sales numbers. Performance was evaluated for both using the Mean Average Percent Error (MAPE) and visualized on a graph of sales testing data.
 
